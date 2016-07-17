@@ -1,10 +1,72 @@
 
-这里我将把我在使用react-native做app开发的工作中遇到的一些棘手的问题和踩过的一些坑分享给大家，和小伙伴们一起学习、分享、交流更多的经验。
+这里我将把我在使用react-native做app开发的工作中遇到的一些棘手的问题和踩过的一些坑分享给大家，和小伙伴们一起学习、分享、交流更多
+的经验。
+
 如若您在阅读的过程中发现了一些错误，请您留言告诉我，我将在收到消息后第一时间来改正。
 
+------------------------------------------------------------------------------------------------------------------------------
 
+1、Navigator的触摸(滑动)返回和无路由的情况下可拖动部分空白问题：
+   
+   我觉得这个功能(触摸/滑动)在于简单的app或者文章阅读类的app使用是非常好的，但是如果是相对交互复杂的app来说可能有点哗众取宠了
+   (仅是个人观点)，目前我使用的版本 "react-native": "^0.26.1"，官网也没有给出对应的属性来设置关闭此效果吗，那么我们智能在Navig
+   ator我配置源文件中修改。
+   
+   为什么我非要在这里纠结这个效果带来的我所谓的小bug呢，因为在我使用的过程中发现如果开启触摸的效果后，至少会引起两种问题：
+   
+   1）、在你触摸左右滑动的时候会把整个显示层拖动留下部分的空白页面，反正我觉得交互和体验效果是非常不爽的，特意还看了BAT旗下的一
+   些app他们几乎都不会出现这种问题。
+   
+   2）、Navigator会和第三方插件"react-native-slider": "^0.9.0"冲突导致菜单不能从左右滑动拉开，对于会不会和官方的组件DrawerLayou
+   tAndroid有没有冲突我暂且不知。
+   
+2、解决方法，由于当前版本没有属性设置关闭，上面我说到智能修改源文件，如果您有更好、更合理的方法不妨告诉我们。
+   
+   NavigatorSceneConfigs.js (目标修改文件)
+   存放地址：xxxx/node_modules/react-native/Libraries/CustomComponents/Navigator/  
+   xxxx 代表您的react-native项目位置
+   
+   gestures设置成null，就不能触摸返回了！
+   
+   因为Navigator有多个动作效果，所以会有多出修改，如果在你的项目中你只是使用了一两个，那么你也可以修改你使用的动作效果即可。
+  
+   例如：
+   
+   ...
+   HorizontalSwipeJumpFromRight: {  
+    ...BaseConfig,  
+    gestures: {  
+      jumpBack: {  
+        ...BaseRightToLeftGesture,  
+        overswipe: BaseOverswipeConfig,  
+        edgeHitWidth: null,  
+        isDetachable: true,  
+      },  
+      jumpForward: {  
+        ...BaseLeftToRightGesture,  
+        overswipe: BaseOverswipeConfig,  
+        edgeHitWidth: null,  
+        isDetachable: true,  
+      },  
+      pop: BaseRightToLeftGesture,  
+    },  
+    animationInterpolators: {  
+      into: buildStyleInterpolator(FromTheLeft),  
+      out: buildStyleInterpolator(FadeToTheRight),  
+    },  
+    ...
+    
+    修改为：
+    FadeAndroid: {  
+    ...BaseConfig,  
+     gestures: null,  //注意，这里变成了一行
+     animationInterpolators: {  
+      into: buildStyleInterpolator(FadeIn),  
+      out: buildStyleInterpolator(FadeOut),  
+     },  
+    }
 
-
+    大功告成，赶快摇起你的手机来。
 
 
 

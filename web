@@ -1,0 +1,9 @@
+如何在CDN网络不可访问情况下，能自动访问网站的jQuery文件？
+一般情况下，CDN网络节点是可靠的。但是偶尔也有失灵的时候，故为了提供双保险，可进行判断网络加载CDN失败，则自动加载网站上的jQuery, 示例代码如下：
+<script type="text/javascript" src="http:/ajax.microsoft.com/ajax/jquery/jquery-1.9.1.min.js"></script> 
+<script type="text/javascript">
+if (typeof jQuery == 'undefined')  
+{  
+	document.write(unescape("%3Cscript src='Scripts/jquery.1.9.1.min.js' type='text/javascript'%3E%3C/script%3E"));  
+}
+</script> 
